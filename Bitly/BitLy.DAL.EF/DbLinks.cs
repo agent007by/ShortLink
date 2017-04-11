@@ -12,7 +12,7 @@ namespace BitLy.DAL.EF
         /// <summary>
         /// Получение общей статистики переходов по ссылкам
         /// </summary>
-        public async Task<IEnumerable<ShortLinkOpenStatistics>> GetShortLinksOpenStatisticsAsync()
+        public  async Task<IEnumerable<ShortLinkOpenStatistics>> GetShortLinksOpenStatisticsAsync()
         {
             return await Task.Run(() => new List<ShortLinkOpenStatistics> {
                 new ShortLinkOpenStatistics
@@ -29,7 +29,7 @@ namespace BitLy.DAL.EF
         /// </summary>
         /// <param name="linksOpenCount">Словарь ссылок и колличество их открытий</param>
         public async Task SaveOpenLinksCountAsync(IDictionary<string, int> linksOpenCount)
-        {
+        {//ToDo сохраняем табличным типом
             throw new NotImplementedException();
         }
         /// <summary>

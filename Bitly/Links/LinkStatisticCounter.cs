@@ -1,7 +1,6 @@
 ﻿using BitLy.DAL.EF;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,25 +31,25 @@ namespace LinksFactory
 
                     if (totalOpenLinkCounts.Count > 0)
                     {
-                        ThreadPool.QueueUserWorkItem(q =>
+                        ThreadPool.QueueUserWorkItem(async q =>
                             {
                                 try
                                 {
                                     var w = new Stopwatch();
                                     w.Start();
                                     //ТО Do в финальном варианте работать через DI , сейчас пока набросок.
-                                     dbLinks.SaveOpenLinksCountAsync(totalOpenLinkCounts);
+                                    await dbLinks.SaveOpenLinksCountAsync(totalOpenLinkCounts);
                                     w.Stop();
+
                                 }
                                 catch (Exception ex)
                                 {
-                                    //ToDo подключить логирование
+                                    //ToDo подключить логирование и записать в случае ошибки так же время выполнения w.Elapsed
                                 }
                             });
                     }
                 }
             }
         }
-
     }
 }
