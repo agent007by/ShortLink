@@ -41,7 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LinkOpener.cs" />
+    <Compile Include="LinkRedirector.cs" />
     <Compile Include="LinksGenerator.cs" />
     <Compile Include="LinkStatisticCounter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -54,6 +54,14 @@
     <ProjectReference Include="..\BitLy.DAL.EF\BitLy.DAL.EF.csproj">
       <Project>{21b1b4b4-4b4b-4c83-8899-4620ae95e3dc}</Project>
       <Name>BitLy.DAL.EF</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BitLy.DAL.Entities\BitLy.DAL.Entities.csproj">
+      <Project>{996510b8-784b-41c1-bf02-20c7927324c5}</Project>
+      <Name>BitLy.DAL.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BitLy.Dal.Repositories\BitLy.Dal.Repositories.csproj">
+      <Project>{abdbc6ec-a6a0-482a-921e-43dc2e952a50}</Project>
+      <Name>BitLy.Dal.Repositories</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

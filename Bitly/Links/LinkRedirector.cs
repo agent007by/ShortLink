@@ -3,7 +3,7 @@ using BitLy.DAL.EF;
 
 namespace LinksFactory
 {
-    public static class LinkOpener
+    public static class LinkRedirector
     {
         /// <summary>
         /// Открытие длинной ссылки, через короткую, с засчитываем клика и т.д.
@@ -13,9 +13,9 @@ namespace LinksFactory
         public static async Task<string> OpenShortUrl(string shortUrl)
         {
             var dbLinks = new DbLinks();
-            await LinkStatisticCounter.AddOpenLinkCount(shortUrl).ConfigureAwait(false);
-            var longUrl = await dbLinks.GetOriginalLinkCachedAsync(shortUrl).ConfigureAwait(false);
-            return longUrl;
+            var link = await dbLinks.GetNativeLinkCachedAsync(shortUrl).ConfigureAwait(false);
+            await LinkStatisticCounter.AddOpenLinkCount(link.Id).ConfigureAwait(false);
+            return link.NativeUrl;
         }
     }
 }

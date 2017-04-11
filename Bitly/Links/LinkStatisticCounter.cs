@@ -12,20 +12,20 @@ namespace LinksFactory
         const int LockTimeoutMs = 250;
         const int WriteToDbIntervalSec = 60;
         static DateTime _lastWriteTime = DateTime.Now;
-        static ConcurrentDictionary<string, int> _totalOpenLinkCounts = new ConcurrentDictionary<string, int>();
+        static ConcurrentDictionary<int, int> _totalOpenLinkCounts = new ConcurrentDictionary<int, int>();
         static readonly object _syncRoot = new object();
         static readonly DbLinks dbLinks = new DbLinks();
 
-        public static async Task AddOpenLinkCount(string link)
+        public static async Task AddOpenLinkCount(int linkId)
         {
-            _totalOpenLinkCounts.AddOrUpdate(link, 1, (k, v) => ++v);
+            _totalOpenLinkCounts.AddOrUpdate(linkId, 1, (k, v) => ++v);
             //Проверяем, не подошло ли время очередного ежеминутного сохранения в Бд
             if (DateTime.Now.Subtract(_lastWriteTime).TotalSeconds >= WriteToDbIntervalSec)
             {
                 if (Monitor.TryEnter(_syncRoot, LockTimeoutMs))
                 {
                     var totalOpenLinkCounts = _totalOpenLinkCounts;
-                    _totalOpenLinkCounts = new ConcurrentDictionary<string, int>();
+                    _totalOpenLinkCounts = new ConcurrentDictionary<int, int>();
                     _lastWriteTime = DateTime.Now;
                     Monitor.Exit(_syncRoot);
 
@@ -50,6 +50,11 @@ namespace LinksFactory
                     }
                 }
             }
+        }
+
+        public static async Task SaveData()
+        {
+            await dbLinks.SaveOpenLinksCountAsync(_totalOpenLinkCounts);
         }
     }
 }

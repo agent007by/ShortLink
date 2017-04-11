@@ -16,7 +16,7 @@ namespace Bitly.Controllers
         public async Task<HttpResponseMessage> GetLonglUrl([FromUri] string url)
         {
             var response = Request.CreateResponse(HttpStatusCode.Found);
-            var longUrl = await LinkOpener.OpenShortUrl(url).ConfigureAwait(false);
+            var longUrl = await LinkRedirector.OpenShortUrl(url).ConfigureAwait(false);
             response.Headers.Location = new Uri(longUrl);
             return response;
         }
