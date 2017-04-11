@@ -40,8 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ShortLinkOpenStatisticCount.cs" />
-    <Compile Include="ShortLinkOpenStatistics.cs" />
+    <Compile Include="ShortLinkRedirectCountStatistics.cs" />
+    <Compile Include="ShortLinkStatistics.cs" />
     <Compile Include="ShortLink.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

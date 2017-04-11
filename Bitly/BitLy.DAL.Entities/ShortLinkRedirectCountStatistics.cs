@@ -5,16 +5,21 @@ namespace BitLy.DAL.Entities
     /// <summary>
     /// Статистический эллемент открытия ссылки в еденицу времени
     /// </summary>
-    public class ShortLinkOpenCountStatistic
+    public class ShortLinkRedirectCountStatistics
     {
+        /// <summary>
+        /// Id ссылки
+        /// </summary>
+        public int ShortLinkId { get; set; }
+        
         /// <summary>
         /// Дата открытия ссылки
         /// </summary>
-        public DateTime OpenDate { get; set; }
+        public DateTime CreateDate { get; set; }
 
         /// <summary>
         /// Количество открытий
         /// </summary>
-        public int OpenCount { get; set; }
+        public int RedirectCount { get; set; }
     }
 }

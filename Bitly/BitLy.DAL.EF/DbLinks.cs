@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -19,16 +20,31 @@ namespace BitLy.DAL.EF
         /// <summary>
         /// Получение общей статистики переходов по ссылкам
         /// </summary>
-        public async Task<IEnumerable<ShortLinkOpenStatistics>> GetShortLinksOpenStatisticsAsync()
+        public async Task<IEnumerable<ShortLinkStatistics>> GetShortLinksOpenStatisticsAsync()
         {
-            //ToDo
-            return await Task.Run(() => new List<ShortLinkOpenStatistics> {
-                new ShortLinkOpenStatistics
-                {
-                    Link = new ShortLink { Id = 1, NativeUrl = "http://mail.ru", ShortUrl = "http://bitly/l/fqwerr" },
-                    Statistics = new List<ShortLinkOpenCountStatistic> { new ShortLinkOpenCountStatistic { OpenCount = 100, OpenDate = DateTime.Now } }
-                }
-                });
+            List<Task> tasks = new List<Task>();
+
+            var getNativeLinksTask = GetNativeLinks();
+            tasks.Add(getNativeLinksTask);
+
+            var getShortLinkRedirectCountStatisticsTask = GetShortLinkRedirectCountStatistics();
+            tasks.Add(getShortLinkRedirectCountStatisticsTask);
+
+            await Task.WhenAll(tasks).ConfigureAwait(false);
+            var links = getNativeLinksTask.Result;
+            var statistics = getShortLinkRedirectCountStatisticsTask.Result.ToArray();
+
+            var result=new ConcurrentBag<ShortLinkStatistics>();
+            foreach (var link in links.AsParallel())
+            {
+                result.Add(
+                    new ShortLinkStatistics()
+                           {
+                               Link = link,
+                               Statistics = statistics.Where(s => s.ShortLinkId == link.Id)
+                    });
+            }
+            return result;
         }
 
         /// <summary>
@@ -101,10 +117,73 @@ namespace BitLy.DAL.EF
             }
         }
 
+        public async Task<IEnumerable<ShortLink>> GetNativeLinks()
+        {
+            return await GetNativeLinks(null);
+        }
+
+        public async Task<ShortLink> GetNativeLink(string shortLink)
+        {
+            var links = await GetNativeLinks(shortLink);
+            return links.FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Возвращает оригинальную ссылку из кеша
+        /// </summary>
+        /// <param name="shortLink">укороченная ссылка</param>
+        public async Task<ShortLink> GetNativeLinkCachedAsync(string shortLink)
+        {
+            return await CacheClient.GetCachedObjectInternalWithLockAsync(
+                shortLink,
+                async () => await GetNativeLink(shortLink),
+                TimeSpan.FromMinutes(CasheConfig.LinksDefaultCachePeriodInMinutes));
+        }
+
+        #region private metods
+        /// <summary>
+        /// Получение объединенной информации о переходах по ссылкам за все время.
+        /// </summary>
+        /// <returns></returns>
+        private async Task<IEnumerable<ShortLinkRedirectCountStatistics>> GetShortLinkRedirectCountStatistics()
+        {
+            List<ShortLinkRedirectCountStatistics> result = new List<ShortLinkRedirectCountStatistics>();
+            using (var cnn = new SqlConnection(_connectionString))
+            {
+                using (var cmd = new SqlCommand("[dbo].[ShortLinks_GetFullStat]", cnn) { CommandType = CommandType.StoredProcedure, CommandTimeout = 60 })
+                {
+                    try
+                    {
+                        cnn.Open();
+                        using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                        {
+                            var item = new ShortLinkRedirectCountStatistics();
+                            while (await reader.ReadAsync())
+                            {
+                                item.ShortLinkId = (int)reader["ShortLinkId"];
+                                item.CreateDate = (DateTime)reader["CreateDate"];
+                                item.RedirectCount = (int)reader["RedirectCount"];
+                            }
+                            result.Add(item);
+                        }
+                        return result;
+                    }
+                    catch (SqlException ex)
+                    {
+                        throw new Exception("Ошибка в при получение информации о переходов по ссылкам", ex);
+                    }
+                    finally
+                    {
+                        cnn.Close();
+                    }
+                }
+            }
+        }
+
         /// <summary>
         ///Получение информации о ссылке по ShortLink или обо всех ссылках
         /// </summary>
-        /// <param name="shortLink"></param>
+        /// <param name="shortLink">null-получить все ссылки</param>
         /// <returns></returns>
         private async Task<IEnumerable<ShortLink>> GetNativeLinks(string shortLink)
         {
@@ -147,28 +226,6 @@ namespace BitLy.DAL.EF
                 }
             }
         }
-
-        public async Task<IEnumerable<ShortLink>> GetNativeLinks()
-        {
-            return await GetNativeLinks(null);
-        }
-
-        public async Task<ShortLink> GetNativeLink(string shortLink)
-        {
-            var links = await GetNativeLinks(shortLink);
-            return links.FirstOrDefault();
-        }
-
-        /// <summary>
-        /// Возвращает оригинальную ссылку из кеша
-        /// </summary>
-        /// <param name="shortLink">укороченная ссылка</param>
-        public async Task<ShortLink> GetNativeLinkCachedAsync(string shortLink)
-        {
-            return await CacheClient.GetCachedObjectInternalWithLockAsync(
-                shortLink,
-                async () => await GetNativeLink(shortLink),
-                TimeSpan.FromMinutes(CasheConfig.LinksDefaultCachePeriodInMinutes));
-        }
+        #endregion
     }
 }

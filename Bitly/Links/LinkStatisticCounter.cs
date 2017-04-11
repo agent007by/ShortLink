@@ -1,9 +1,11 @@
 ﻿using BitLy.DAL.EF;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using BitLy.DAL.Entities;
 
 namespace LinksFactory
 {
@@ -16,7 +18,7 @@ namespace LinksFactory
         static readonly object _syncRoot = new object();
         static readonly DbLinks dbLinks = new DbLinks();
 
-        public static async Task AddOpenLinkCount(int linkId)
+        public static async Task AddRedirectLinkCount(int linkId)
         {
             _totalOpenLinkCounts.AddOrUpdate(linkId, 1, (k, v) => ++v);
             //Проверяем, не подошло ли время очередного ежеминутного сохранения в Бд
@@ -55,6 +57,11 @@ namespace LinksFactory
         public static async Task SaveData()
         {
             await dbLinks.SaveOpenLinksCountAsync(_totalOpenLinkCounts);
+        }
+
+        public static async Task<IEnumerable<ShortLinkStatistics>> GetStatistics()
+        {
+           return await dbLinks.GetShortLinksOpenStatisticsAsync();
         }
     }
 }

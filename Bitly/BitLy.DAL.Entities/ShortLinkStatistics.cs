@@ -5,7 +5,7 @@ namespace BitLy.DAL.Entities
     /// <summary>
     /// Общая статистика открытия ссылок
     /// </summary>
-    public class ShortLinkOpenStatistics
+    public class ShortLinkStatistics
     {
         /// <summary>
         /// Укороченная ссылка
@@ -15,6 +15,6 @@ namespace BitLy.DAL.Entities
         /// <summary>
         /// Суммарная статистика открытий ссылок
         /// </summary>
-        public IEnumerable<ShortLinkOpenCountStatistic> Statistics { get; set; }
+        public IEnumerable<ShortLinkRedirectCountStatistics> Statistics { get; set; }
     }
 }

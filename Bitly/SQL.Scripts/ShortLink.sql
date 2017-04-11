@@ -91,7 +91,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[ShortLinks_GetFullStat] (@DateStart date, @DateEnd date)
+CREATE PROCEDURE [dbo].[ShortLinks_GetFullStat] 
 AS
 BEGIN
 	CREATE TABLE #tmp  (ShortLinkId int,  RedirectCount int NULL, CreateDate date NULL)
@@ -115,9 +115,7 @@ BEGIN
 					ra.RedirectCount, 
 					ra.CreateDate 
 				FROM 				
-					ShortLinks_RedirectArchive AS ra
-				WHERE 
-					ra.CreateDate BETWEEN @DateStart	AND @DateEnd
+					ShortLinks_RedirectArchive AS ra				
 				) n
 				GROUP BY 
 					ra.ShortLinkId,ra.CreateDate

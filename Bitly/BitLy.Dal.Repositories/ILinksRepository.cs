@@ -39,7 +39,7 @@ namespace BitLy.DAL.Repositories
         /// <summary>
         /// Получение общей статистики переходов по ссылкам
         /// </summary>
-        Task<IEnumerable<ShortLinkOpenStatistics>> GetShortLinksOpenStatisticsAsync();
+        Task<IEnumerable<ShortLinkStatistics>> GetShortLinksOpenStatisticsAsync();
 
 
     }

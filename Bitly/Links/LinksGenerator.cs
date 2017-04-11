@@ -25,6 +25,7 @@ namespace LinksFactory
         public static async Task<string> GetNewShortLinkAsync(string longLink, string hostUrl)
         {
             var shortLink = $"{hostUrl}/{GenerateIdentifier(ShortUrlCharset,ShortUrlLength)}";
+            //ToDo проверка на уникальность сгенерированной ссылки
             //1) Запись в кеш ссылок, свежесгенерированной ссылки, для моментального использования + что бы не получилось что в БД еще пусто.
             CacheClient.SetCachedObject(shortLink, longLink, TimeSpan.FromMinutes(CasheConfig.LinksDefaultCachePeriodInMinutes));
             //TODO 2) Запись в БД отдельной задачей Task.Run или скорее всего через async (еще протестирую производительность)
