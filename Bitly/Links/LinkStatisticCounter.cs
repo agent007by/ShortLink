@@ -22,6 +22,7 @@ namespace LinksFactory
         {
             _totalOpenLinkCounts.AddOrUpdate(linkId, 1, (k, v) => ++v);
             //Проверяем, не подошло ли время очередного ежеминутного сохранения в Бд
+            //ToDo или же количество достигнет определенного критического размера.
             if (DateTime.Now.Subtract(_lastWriteTime).TotalSeconds >= WriteToDbIntervalSec)
             {
                 if (Monitor.TryEnter(_syncRoot, LockTimeoutMs))

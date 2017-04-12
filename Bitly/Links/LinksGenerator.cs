@@ -2,6 +2,7 @@
 using BitLy.DAL.EF;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -15,24 +16,24 @@ namespace LinksFactory
         //Можно поступить коммерческим образом, и раздавать короткие ссылки из 2,3,4 символов.
         private const int ShortUrlLength = 5;
         private const string ShortUrlCharset = "bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZ0123456789._-~";
-       
+        private static readonly string _hostUrl = ConfigurationManager.AppSettings["hostUrl"];
+
         /// <summary>
         /// Генерация короткой ссылки (используя особый механизм)
         /// </summary>
-        /// <param name="longLink">Исходная ссылка</param>
-        /// <param name="hostUrl">Адрес хоста приложения</param>
+        /// <param name="nativeLink">Исходная ссылка</param>
         /// <returns>Укороченная ссылка</returns>
-        public static async Task<string> GetNewShortLinkAsync(string longLink, string hostUrl)
+        public static async Task<string> GetNewShortLinkAsync(string nativeLink)
         {
-            var shortLink = $"{hostUrl}/{GenerateIdentifier(ShortUrlCharset,ShortUrlLength)}";
+            var shortLink = $"{_hostUrl}/{GenerateIdentifier(ShortUrlCharset, ShortUrlLength)}";
             //ToDo проверка на уникальность сгенерированной ссылки
             //1) Запись в кеш ссылок, свежесгенерированной ссылки, для моментального использования + что бы не получилось что в БД еще пусто.
-            CacheClient.SetCachedObject(shortLink, longLink, TimeSpan.FromMinutes(CasheConfig.LinksDefaultCachePeriodInMinutes));
+            CacheClient.SetCachedObject(shortLink, nativeLink, TimeSpan.FromMinutes(CasheConfig.LinksDefaultCachePeriodInMinutes));
             //TODO 2) Запись в БД отдельной задачей Task.Run или скорее всего через async (еще протестирую производительность)
-           // await DbLinks.SaveLink(shortLink, longLink);
+            // await DbLinks.SaveLink(shortLink, longLink);
             return shortLink;
         }
-               
+
         private static string GenerateIdentifier(string charset, int length)
         {
             byte[] resultBytes = new byte[length];

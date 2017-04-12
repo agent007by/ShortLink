@@ -5,9 +5,6 @@ namespace BitLy.CacheHelper
 {
     public class CasheConfig
     {
-        public static int LinksDefaultCachePeriodInMinutes
-        {
-            get { return Convert.ToInt32(ConfigurationManager.AppSettings["LinksDefaultCachePeriodInMinutes"]); }
-        }
+        public static int LinksDefaultCachePeriodInMinutes => Convert.ToInt32(ConfigurationManager.AppSettings["LinksDefaultCachePeriodInMinutes"]);
     }
 }

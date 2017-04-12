@@ -7,29 +7,32 @@ using LinksFactory;
 
 namespace Bitly.Controllers
 {
-    public class OpenLinkController : ApiController
+    public class ShortLinkController : ApiController
     {
+        /// <summary>
+        /// Получение новой короткой ссылки
+        /// </summary>
+        [Route("api/shortUrl/new/")]
+        [HttpPut]
+        public async Task<IHttpActionResult> GetStatistics([FromUri] string nativeUrl)
+        {
+            //ToDo повесить backend
+            return Ok("//sl.somee.com/l/12345");
+        }
+
         /// <summary>
         /// Редирект на оригинальную ссылку
         /// </summary>
         [Route("l/{url}")]
         public async Task<HttpResponseMessage> GetLonglUrl([FromUri] string url)
         {
+            //TODO укоротить Url убрать "l"
             var response = Request.CreateResponse(HttpStatusCode.Found);
             var longUrl = await LinkRedirector.OpenShortUrl(url).ConfigureAwait(false);
             response.Headers.Location = new Uri(longUrl);
             return response;
         }
 
-        /// <summary>
-        /// Редирект на статистику
-        /// </summary>
-        [Route("s/{url}")]
-        public HttpResponseMessage GetStatistics([FromUri] string url)
-        {
-            var response = Request.CreateResponse(HttpStatusCode.Found);
-            response.Headers.Location = new Uri("/");
-            return response;
-        }
+        //ToDo добавить получение статистики
     }
 }

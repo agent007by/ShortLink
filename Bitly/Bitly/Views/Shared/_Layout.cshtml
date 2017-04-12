@@ -9,25 +9,32 @@
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">            
+        <div class="container">
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Укоротить ссылку", "Index", "Home", new { area = "" }, null)</li>    
-                    <li>@Html.ActionLink("Ваши ссылки", "GetShortUrls", "UrlShortener", new { area = "" }, null)</li>               
+                    <li>@Html.ActionLink("Укоротить ссылку", "Index", "Home", new { area = "" }, null)</li>
+                    <li>@Html.ActionLink("Ваши ссылки", "ShortLinksStatistics", "Home", new { area = "" }, null)</li>
                 </ul>
             </div>
         </div>
     </div>
     <div class="container body-content">
-        @RenderBody()
+        <div id="bodyContent">
+            @RenderBody()
+        </div>
         <hr />
         <footer>
             <p>&copy; @DateTime.Now.Year - специально для ...</p>
         </footer>
     </div>
-
+    @*ToDo подключить Бандлы с обьединением и минификацией*@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/knockout")
+
+    @Scripts.Render("~/bundles/app/master")
+    @Scripts.Render("~/bundles/app/shortLink")
+
     @RenderSection("scripts", required: false)
 </body>
 </html>

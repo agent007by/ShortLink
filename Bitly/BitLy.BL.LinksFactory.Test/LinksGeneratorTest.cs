@@ -15,7 +15,7 @@ namespace BitLy.BL.LinksFactory.Test
             var uniqueShortLinks = new HashSet<string>();
             for (int i = 0; i < linksCount; i++)
             {
-                var shortLinks = await LinksGenerator.GetNewShortLinkAsync("http://testurl.com", "http://bitly.com");
+                var shortLinks = await LinksGenerator.GetNewShortLinkAsync("http://testurl.com");
                 uniqueShortLinks.Add(shortLinks);
                 Assert.IsNotNull(shortLinks);
             }
