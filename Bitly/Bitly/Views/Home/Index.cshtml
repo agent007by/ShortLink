@@ -3,8 +3,8 @@
         <br />
         <br />
         <div>
-            @*//ToDo Валиадация  и нажатие по Enter*@
-            <input id="txtLongUrl" type="text" placeholder="Вставьте вашу длинную ссылку сюда..." class="form-control" data-bind="value: link" />
+            @*//ToDo нажатие по Enter*@
+            <input id="txtLongUrl" type="text" placeholder="Вставьте вашу длинную ссылку сюда..." class="form-control" data-bind="value: link.extend({ url: true })"/>
             <button class="btn btn-primary" data-bind="click: getShortUrl,text: buttonText"></button>
         </div>
     </div>

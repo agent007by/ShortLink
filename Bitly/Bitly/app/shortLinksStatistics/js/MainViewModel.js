@@ -3,7 +3,7 @@
 
     module.MainViewModel = function () {
         var self = this;
-        self.loading = ko.observable(true);
+        self.loading = ko.observable(false);
         self.statisticsData = ko.observable(null);
         self.hasData = ko.computed(function () {
             if (self.statisticsData() && self.statisticsData().length > 0) {

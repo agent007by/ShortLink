@@ -2,8 +2,8 @@
     <h2>Статистика переходов по ссылкам</h2>
 
     @*//ToDo добавить Loader*@
-    <span data-bind="visible: loading"> Идет загрузка...</span>
-
+    <span data-bind="if: loading"> Идет загрузка...</span>
+    <!-- ko ifnot: loading -->
     <table class="table" data-bind="visible: hasData">
         <thead>
             <tr>
@@ -33,20 +33,17 @@
                             </tr>
                         </tbody>
                     </table>
-                   <span data-bind="visible: Statistics.length==0" title="Данные обновляются с задержкой в 10 сек."><span class="glyphicon glyphicon-info-sign"></span> нет данных</span>
+                    <span data-bind="visible: Statistics.length==0" title="Данные обновляются с задержкой в 10 сек."><span class="glyphicon glyphicon-info-sign"></span> нет данных</span>
                 </td>
             </tr>
         </tbody>
     </table>
-
     <h3 data-bind="visible: !hasData">Нет данных.</h3>
+    <!-- /ko -->
 
-</div>
-
-
-@section scripts {
-    @Scripts.Render("~/bundles/app/shortLinksStatistics")
-}
+    @section scripts {
+        @Scripts.Render("~/bundles/app/shortLinksStatistics")
+    }
 
 
 

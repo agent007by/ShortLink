@@ -42,7 +42,7 @@ namespace LinksFactory
             /*2. Запись в кеш ссылок, свежесгенерированной ссылки, для моментального использования + что бы не получилось что в БД еще пусто.
             т.к. по статистике она сразу же будет использована создателем для проверки работоспособности.*/
           
-            CacheClient.SetCachedObject(shortUrl, nativeLink, TimeSpan.FromMinutes(CasheConfig.LinksDefaultCachePeriodInMinutes));
+            //CacheClient.SetCachedObject(shortUrl, nativeLink, TimeSpan.FromMinutes(CasheConfig.LinksDefaultCachePeriodInMinutes));
 
             //TODO 3. Запись в БД отдельной задачей Task.Run или скорее всего через async (еще протестирую производительность)
             ThreadPool.QueueUserWorkItem(async q =>

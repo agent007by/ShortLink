@@ -17,6 +17,7 @@ namespace LinksFactory
         const int LockTimeoutMs = 250;
         const int WriteToDbIntervalSec = 10;
         const int WriteToDbMaxCount = 100;
+        const int MaxUrlLength = 100;
         static DateTime _lastWriteTime = DateTime.Now;
         static ConcurrentDictionary<int, int> _totalOpenLinkCounts = new ConcurrentDictionary<int, int>();
         static readonly object _syncRoot = new object();
@@ -70,6 +71,10 @@ namespace LinksFactory
             var statistics = await dbLinks.GetShortLinksOpenStatisticsAsync();
             foreach (var statistic in statistics)
             {
+                if (statistic.Link.NativeUrl.Length > MaxUrlLength)
+                {
+                    statistic.Link.NativeUrl = string.Concat(statistic.Link.NativeUrl.Substring(0, MaxUrlLength), "...");
+                }
                 statistic.Link.ShortUrl = $"{_hostUrl}/{statistic.Link.ShortUrl}";
                 statistic.Statistics = statistic.Statistics.OrderByDescending(s => s.CreateDate);
             }

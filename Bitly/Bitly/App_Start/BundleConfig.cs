@@ -28,7 +28,11 @@ namespace Bitly
                       "~/Scripts/knockout/js/knockout-{version}.js",
                       "~/Scripts/knockout/js/knockout.mapping-latest.js",
                       "~/Scripts/knockout/js/knockout.validation.js",
-                      "~/Scripts/knockout/js/knockout.validation.bootstrap.js"));
+                      "~/Scripts/knockout/js/knockout.validation.bootstrap.js",
+                      "~/Scripts/knockout/js/extenders/urlValidation.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/toastr").Include(
+                      "~/Scripts/toastr/js/toastr.js"));
             #endregion
 
             bundles.Add(new ScriptBundle("~/bundles/app/master").Include(
@@ -49,6 +53,8 @@ namespace Bitly
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
+            bundles.Add(new StyleBundle("~/Content/toastr").Include(
+                     "~/Scripts/toastr/css/toastr.css"));
             #endregion
             // Включить упаковку и минификацию.
             BundleTable.EnableOptimizations = true;
