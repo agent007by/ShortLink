@@ -1,11 +1,11 @@
 ﻿<div>
     <div class="form-inline">
-        <br/>
+        <br />
         <div class="form-group">
             <div class="input-group">
-                <label class="sr-only" for="txtLongUrl">URL</label>
                 <span class="input-group-addon">URL</span>
-                <input id="txtLongUrl" type="text" placeholder="Вставьте вашу длинную ссылку сюда..." class=".txtLongUrl form-control" data-bind="value: link"/>
+                @*//ToDo Валиадация*@
+                <input id="txtLongUrl" type="text" placeholder="Вставьте вашу длинную ссылку сюда..." class="form-control" data-bind="value: link" />
                 <button class="btn btn-primary" data-bind="click: getShortUrl,text: buttonText"></button>
             </div>
         </div>
@@ -13,5 +13,8 @@
 </div>
 
 
+@section scripts {
+    @Scripts.Render("~/bundles/app/shortLink")
+}
 
 

@@ -14,8 +14,12 @@ namespace LinksFactory
         {
             var dbLinks = new DbLinks();
             var link = await dbLinks.GetNativeLinkCachedAsync(shortUrl).ConfigureAwait(false);
-            await LinkStatisticCounter.AddRedirectLinkCount(link.Id).ConfigureAwait(false);
-            return link.NativeUrl;
+            if (link != null)
+            {
+                await LinkStatisticCounter.AddRedirectLinkCount(link.Id).ConfigureAwait(false);
+            }
+           
+            return link?.NativeUrl;
         }
     }
 }

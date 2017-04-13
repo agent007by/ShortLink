@@ -16,6 +16,7 @@ namespace BitLy.DAL.Entities
         /// Дата открытия ссылки
         /// </summary>
         public DateTime CreateDate { get; set; }
+        public string CreateDateString => CreateDate.ToString("d");
 
         /// <summary>
         /// Количество открытий

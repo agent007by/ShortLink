@@ -14,25 +14,39 @@ namespace Bitly.Controllers
         /// </summary>
         [Route("api/shortUrl/new/")]
         [HttpPut]
-        public async Task<IHttpActionResult> GetStatistics([FromUri] string nativeUrl)
+        public async Task<IHttpActionResult> CreateNewShortUrl([FromUri] string nativeUrl)
         {
-            //ToDo повесить backend
-            return Ok("//sl.somee.com/l/12345");
+            var link = await LinksGenerator.GetNewShortLinkAsync(nativeUrl);
+            return Ok(link);
+        }
+
+        /// <summary>
+        /// Получение статистики переходов по коротким ссылкам
+        /// </summary>
+        [Route("api/shortUrl/statistics/")]
+        [HttpGet]
+        public async Task<IHttpActionResult> GetStatistics()
+        {
+            var statistics = await LinkStatisticCounter.GetStatistics();
+            return Ok(statistics);
         }
 
         /// <summary>
         /// Редирект на оригинальную ссылку
         /// </summary>
-        [Route("l/{url}")]
+        [Route("{url}")]
         public async Task<HttpResponseMessage> GetLonglUrl([FromUri] string url)
         {
             //TODO укоротить Url убрать "l"
+            //StatusCode =HttpStatusCode.NotFound
             var response = Request.CreateResponse(HttpStatusCode.Found);
             var longUrl = await LinkRedirector.OpenShortUrl(url).ConfigureAwait(false);
-            response.Headers.Location = new Uri(longUrl);
+           
+            if (longUrl != null)
+            {
+                response.Headers.Location = new Uri(longUrl);
+            }
             return response;
         }
-
-        //ToDo добавить получение статистики
     }
 }

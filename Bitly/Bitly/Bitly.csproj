@@ -270,6 +270,10 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BitLy.DAL.Entities\BitLy.DAL.Entities.csproj">
+      <Project>{996510B8-784B-41C1-BF02-20C7927324C5}</Project>
+      <Name>BitLy.DAL.Entities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Links\BitLy.BL.LinksFactory.csproj">
       <Project>{31fee88d-d4a8-42f7-93a0-be64f1be10bc}</Project>
       <Name>BitLy.BL.LinksFactory</Name>

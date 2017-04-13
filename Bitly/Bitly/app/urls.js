@@ -7,7 +7,7 @@
             });
         },
         getStatistics: function () {
-            return '/api/statistics';
+            return '/api/shortUrl/statistics';
         }
     };
 

@@ -1,10 +1,51 @@
-﻿<div>
-    <form class="form-inline" role="form">
-        Ваши ссылки:
+﻿<div class="container">
+    <h2>Статистика переходов по ссылкам</h2>
 
-    </form>
+    @*//ToDo добавить Loader*@
+    <span data-bind="visible: !statisticsData"> Идет загрузка...</span>
+
+    <table class="table" data-bind="visible: hasData">
+        <thead>
+            <tr>
+                <th>Полная ссылка</th>
+                <th>Укороченная ссылка</th>
+                <th>Дата создания</th>
+                <th>Данные по переходам</th>
+            </tr>
+        </thead>
+        <tbody data-bind="foreach: statisticsData">
+            <tr>
+                <td><a target="_blank" data-bind="text: Link.NativeUrl, attr: {href: Link.NativeUrl}"></a></td>
+                <td><a target="_blank" data-bind="text: Link.ShortUrl, attr: {href: Link.ShortUrl}"></a></td>
+                <td><span data-bind="text: Link.CreateDateString"></span></td>
+                <td>
+                    <table class="table" data-bind="visible: Statistics">
+                        <thead>
+                            <tr>
+                                <th>Дата</th>
+                                <th>Кол-во переходов</th>
+                            </tr>
+                        </thead>
+                        <tbody data-bind="foreach: Statistics">
+                            <tr>
+                                <td><span data-bind="text: CreateDateString"></span></td>
+                                <td><span data-bind="text: RedirectCount"></span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3 data-bind="visible: !hasData">Нет данных.</h3>
+
 </div>
-@*ToDo разобраться с порядком подключения скриптов*@
-@Scripts.Render("~/bundles/app/shortLinksStatistics")
+
+
+@section scripts {
+    @Scripts.Render("~/bundles/app/shortLinksStatistics")
+}
+
 
 

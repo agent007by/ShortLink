@@ -16,7 +16,7 @@ namespace BitLy.DAL.EF
     //Прикрутить HelpClass или Dapper для маппинга
     public class DbLinks : ILinkRepository
     {
-        private static string _connectionString = ConfigurationManager.ConnectionStrings["ShortLink"].ConnectionString;
+        private static readonly string ConnectionString = ConfigurationManager.ConnectionStrings["ShortLink"].ConnectionString;
         /// <summary>
         /// Получение общей статистики переходов по ссылкам
         /// </summary>
@@ -34,14 +34,14 @@ namespace BitLy.DAL.EF
             var links = getNativeLinksTask.Result;
             var statistics = getShortLinkRedirectCountStatisticsTask.Result.ToArray();
 
-            var result=new ConcurrentBag<ShortLinkStatistics>();
+            var result = new ConcurrentBag<ShortLinkStatistics>();
             foreach (var link in links.AsParallel())
             {
                 result.Add(
                     new ShortLinkStatistics()
-                           {
-                               Link = link,
-                               Statistics = statistics.Where(s => s.ShortLinkId == link.Id)
+                    {
+                        Link = link,
+                        Statistics = statistics.Where(s => s.ShortLinkId == link.Id)
                     });
             }
             return result;
@@ -54,7 +54,7 @@ namespace BitLy.DAL.EF
         public async Task SaveOpenLinksCountAsync(IDictionary<int, int> linksRedirectsCount)
         {
             //ToDo предусмотреть гарантированное сохранение
-            using (var cnn = new SqlConnection(_connectionString))
+            using (var cnn = new SqlConnection(ConnectionString))
             {
                 using (var cmd = new SqlCommand("[dbo].[ShortLinks_RedirectsAdd]", cnn) { CommandType = CommandType.StoredProcedure, CommandTimeout = 1000 })
                 {
@@ -69,11 +69,11 @@ namespace BitLy.DAL.EF
                         row["RedirectCount"] = item.Value;
                         dt.Rows.Add(row);
                     }
-                    cmd.Parameters.AddWithValue("@NewPhoneCalls", dt);
+                    cmd.Parameters.AddWithValue("@Redirects", dt);
 
                     try
                     {
-                        cnn.Open();
+                        await cnn.OpenAsync();
                         await cmd.ExecuteNonQueryAsync();
                     }
                     catch (SqlException ex)
@@ -94,7 +94,7 @@ namespace BitLy.DAL.EF
         /// <param name="nativeLink"></param>
         public async Task SaveLink(string shortLink, string nativeLink)
         {
-            using (var cnn = new SqlConnection(_connectionString))
+            using (var cnn = new SqlConnection(ConnectionString))
             {
                 using (var cmd = new SqlCommand("[dbo].[ShortLinks_Save]", cnn) { CommandType = CommandType.StoredProcedure, CommandTimeout = 1000 })
                 {
@@ -102,7 +102,7 @@ namespace BitLy.DAL.EF
                     cmd.Parameters.AddWithValue("@ShortLink", shortLink);
                     try
                     {
-                        cnn.Open();
+                        await cnn.OpenAsync();
                         await cmd.ExecuteNonQueryAsync();
                     }
                     catch (SqlException ex)
@@ -148,23 +148,25 @@ namespace BitLy.DAL.EF
         private async Task<IEnumerable<ShortLinkRedirectCountStatistics>> GetShortLinkRedirectCountStatistics()
         {
             List<ShortLinkRedirectCountStatistics> result = new List<ShortLinkRedirectCountStatistics>();
-            using (var cnn = new SqlConnection(_connectionString))
+            using (var cnn = new SqlConnection(ConnectionString))
             {
                 using (var cmd = new SqlCommand("[dbo].[ShortLinks_GetFullStat]", cnn) { CommandType = CommandType.StoredProcedure, CommandTimeout = 60 })
                 {
                     try
                     {
-                        cnn.Open();
+                        await cnn.OpenAsync();
                         using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
                         {
-                            var item = new ShortLinkRedirectCountStatistics();
                             while (await reader.ReadAsync())
                             {
-                                item.ShortLinkId = (int)reader["ShortLinkId"];
-                                item.CreateDate = (DateTime)reader["CreateDate"];
-                                item.RedirectCount = (int)reader["RedirectCount"];
+                                var item = new ShortLinkRedirectCountStatistics
+                                {
+                                    ShortLinkId = (int)reader["ShortLinkId"],
+                                    CreateDate = (DateTime)reader["CreateDate"],
+                                    RedirectCount = (int)reader["RedirectCount"]
+                                };
+                                result.Add(item);
                             }
-                            result.Add(item);
                         }
                         return result;
                     }
@@ -188,30 +190,27 @@ namespace BitLy.DAL.EF
         private async Task<IEnumerable<ShortLink>> GetNativeLinks(string shortLink)
         {
             List<ShortLink> result = new List<ShortLink>();
-            using (var cnn = new SqlConnection(_connectionString))
+            using (var cnn = new SqlConnection(ConnectionString))
             {
                 using (var cmd = new SqlCommand("[dbo].[ShortLinks_Get]", cnn) { CommandType = CommandType.StoredProcedure, CommandTimeout = 60 })
                 {
-                    if (!string.IsNullOrEmpty(shortLink))
-                    {
-                        cmd.Parameters.AddWithValue("@ShortLink", shortLink);
-                    }
+                    cmd.Parameters.AddWithValue("@ShortLink", string.IsNullOrEmpty(shortLink) ? null : shortLink);
 
                     try
                     {
-                        cnn.Open();
+                        await cnn.OpenAsync();
                         using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
                         {
-                            var item = new ShortLink();
                             while (await reader.ReadAsync())
                             {
+                                var item = new ShortLink();
                                 item.Id = (Int32)reader["ShortLinkId"];
                                 item.NativeUrl = reader["NativeUrl"].ToString();
                                 item.ShortUrl = reader["ShortUrl"].ToString();
                                 item.IsActive = (bool)reader["IsActive"];
                                 item.CreateDate = (DateTime)reader["CreateDate"];
+                                result.Add(item);
                             }
-                            result.Add(item);
                         }
                         return result;
                     }

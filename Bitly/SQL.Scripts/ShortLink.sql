@@ -2,7 +2,6 @@ USE [Education.CRM]
 --USE ShortLinks
 GO
 
-/****** Object:  Table [dbo].[Banners_ShowsDaily]    Script Date: 10.04.2017 18:58:51 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -47,6 +46,7 @@ CREATE TABLE [dbo].[ShortLinks_RedirectArchive](
 GO
 --- Хранимые процедуры: ---
 
+-- //ToDo написать Job
 CREATE PROCEDURE [dbo].[ShortLinks_AddRedirectDailyToArchive]
 AS
 BEGIN
@@ -106,7 +106,7 @@ BEGIN
 					,SUM(rd.RedirectCount) AS RedirectCount
 					,CAST(rd.CreateDate AS DATE) AS CreateDate 		 
 				FROM 				
-					[dbo].[Banners_ShowsDaily]  AS rd			
+					[dbo].[ShortLinks_RedirectDaily]  AS rd			
 				GROUP BY 
 					rd.ShortLinkId,CAST(CreateDate AS DATE) 	
 				UNION ALL
@@ -118,7 +118,7 @@ BEGIN
 					ShortLinks_RedirectArchive AS ra				
 				) n
 				GROUP BY 
-					ra.ShortLinkId,ra.CreateDate
+					n.ShortLinkId,n.CreateDate
 			) shows 	
 
 	SELECT
@@ -159,7 +159,7 @@ GO
 
 
 CREATE PROCEDURE [dbo].[ShortLinks_Get](
-	@ShortLink nvarchar(8) NULL	
+	@ShortLink nvarchar(8) = NULL	
 	)
 AS
 BEGIN
@@ -207,6 +207,8 @@ END
 
 
 
+
+
 --- Утилизация: ---
 --DROP TABLE [dbo].[ShortLinks]
 --DROP TABLE [dbo].[ShortLinks_RedirectDaily]
@@ -218,4 +220,18 @@ END
 --DROP PROCEDURE [dbo].[ShortLinks_Get]
 --DROP PROCEDURE [dbo].[ShortLinks_RedirectsAdd]
 --DROP TYPE [dbo].[ShortLinksRedirectsCountData]
+
+
+-- Наполнение архива с переходами что бы не ждать 1 сутки.
+  --Insert INTO [ShortLinks].[dbo].ShortLinks_RedirectArchive VALUES(1,'2017-04-13',100)
+  --Insert INTO [ShortLinks].[dbo].ShortLinks_RedirectArchive VALUES(2,'2017-04-13',100)
+  --Insert INTO [ShortLinks].[dbo].ShortLinks_RedirectArchive VALUES(3,'2017-04-13',100)
+
+  --Insert INTO [ShortLinks].[dbo].ShortLinks_RedirectArchive VALUES(1,'2017-04-12',100)
+  --Insert INTO [ShortLinks].[dbo].ShortLinks_RedirectArchive VALUES(2,'2017-04-12',100)
+  --Insert INTO [ShortLinks].[dbo].ShortLinks_RedirectArchive VALUES(3,'2017-04-12',100)
+
+  --Insert INTO [ShortLinks].[dbo].ShortLinks_RedirectArchive VALUES(1,'2017-04-12',100)
+  --Insert INTO [ShortLinks].[dbo].ShortLinks_RedirectArchive VALUES(2,'2017-04-12',100)
+  --Insert INTO [ShortLinks].[dbo].ShortLinks_RedirectArchive VALUES(3,'2017-04-12',100)
 

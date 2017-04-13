@@ -31,5 +31,7 @@ namespace BitLy.DAL.Entities
         /// Дата создания ссылки
         /// </summary>
         public DateTime CreateDate { get; set; }
+
+        public string CreateDateString => CreateDate.ToString("g");
     }
 }
