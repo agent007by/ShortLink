@@ -2,7 +2,7 @@
     <h2>Статистика переходов по ссылкам</h2>
 
     @*//ToDo добавить Loader*@
-    <span data-bind="visible: !statisticsData"> Идет загрузка...</span>
+    <span data-bind="visible: loading"> Идет загрузка...</span>
 
     <table class="table" data-bind="visible: hasData">
         <thead>
@@ -19,7 +19,7 @@
                 <td><a target="_blank" data-bind="text: Link.ShortUrl, attr: {href: Link.ShortUrl}"></a></td>
                 <td><span data-bind="text: Link.CreateDateString"></span></td>
                 <td>
-                    <table class="table" data-bind="visible: Statistics">
+                    <table class="table" data-bind="visible: Statistics.length>0">
                         <thead>
                             <tr>
                                 <th>Дата</th>
@@ -33,6 +33,7 @@
                             </tr>
                         </tbody>
                     </table>
+                   <span data-bind="visible: Statistics.length==0" title="Данные обновляются с задержкой в 10 сек."><span class="glyphicon glyphicon-info-sign"></span> нет данных</span>
                 </td>
             </tr>
         </tbody>

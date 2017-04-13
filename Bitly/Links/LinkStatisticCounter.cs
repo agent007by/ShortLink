@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Configuration;
 using System.Diagnostics;
 using System.Threading;
@@ -70,6 +71,7 @@ namespace LinksFactory
             foreach (var statistic in statistics)
             {
                 statistic.Link.ShortUrl = $"{_hostUrl}/{statistic.Link.ShortUrl}";
+                statistic.Statistics = statistic.Statistics.OrderByDescending(s => s.CreateDate);
             }
             return statistics;
         }

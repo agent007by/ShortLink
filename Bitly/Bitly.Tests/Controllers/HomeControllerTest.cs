@@ -12,13 +12,25 @@ namespace Bitly.Tests.Controllers
         {
             // Arrange
             HomeController controller = new HomeController();
-
             // Act
             ViewResult result = controller.Index() as ViewResult;
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual("Home Page", result.ViewBag.Title);
+            Assert.AreEqual("Укоротить ссылку", result.ViewBag.Title);
+        }
+
+        [TestMethod]
+        public void Statistics()
+        {
+            // Arrange
+            HomeController controller = new HomeController();
+            // Act
+            ViewResult result = controller.ShortLinksStatistics() as ViewResult;
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual("Ваши ссылки", result.ViewBag.Title);
         }
     }
 }
