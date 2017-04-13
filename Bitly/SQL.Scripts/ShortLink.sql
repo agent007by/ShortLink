@@ -1,5 +1,4 @@
-USE [Education.CRM]
---USE ShortLinks
+USE ShortLinks
 GO
 
 SET ANSI_NULLS ON
