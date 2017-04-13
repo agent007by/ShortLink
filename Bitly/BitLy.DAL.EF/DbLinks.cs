@@ -98,6 +98,7 @@ namespace BitLy.DAL.EF
             {
                 using (var cmd = new SqlCommand("[dbo].[ShortLinks_Save]", cnn) { CommandType = CommandType.StoredProcedure, CommandTimeout = 1000 })
                 {
+                    //ToDo Сохранять  дату в соответствии с часовым поясом клиента
                     cmd.Parameters.AddWithValue("@NativeLink", nativeLink);
                     cmd.Parameters.AddWithValue("@ShortLink", shortLink);
                     try

@@ -41,8 +41,8 @@ namespace Bitly.Controllers
             //StatusCode =HttpStatusCode.NotFound
             var response = Request.CreateResponse(HttpStatusCode.Found);
             var longUrl = await LinkRedirector.OpenShortUrl(url).ConfigureAwait(false);
-           
-            if (longUrl != null)
+
+            if (longUrl != null && longUrl.Length > 0 && longUrl.Contains("//"))
             {
                 response.Headers.Location = new Uri(longUrl);
             }
